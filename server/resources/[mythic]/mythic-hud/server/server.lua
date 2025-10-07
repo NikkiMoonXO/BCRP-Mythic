@@ -131,12 +131,7 @@ end)
 
 function RegisterChatCommands()
 	Chat:RegisterCommand("uir", function(source, args, rawCommand)
-		if not _uircd[source] or os.time() > _uircd[source] then
-			TriggerClientEvent("UI:Client:Reset", source, true)
-			_uircd[source] = os.time() + (60 * 5)
-		else
-			Chat.Send.System:Single(source, "You're Trying To Do This Too Much, Stop.")
-		end
+		TriggerClientEvent("UI:Client:Reset", source, true)
 	end, {
 		help = "Resets UI",
 	})

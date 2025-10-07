@@ -13,7 +13,6 @@ import {
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@mui/styles';
-import Bars from './forms/status-types/Bars';
 import Nui from '../../util/Nui';
 import { useEffect } from 'react';
 import Minimap from './forms/layouts/Minimap';
@@ -31,16 +30,8 @@ const layouts = [
         label: 'Default',
     },
     {
-        value: 'minimap',
-        label: 'Status Anchored Below Minimap',
-    },
-    {
-        value: 'center',
-        label: 'Status Anchored Bottom Center',
-    },
-    {
         value: 'condensed',
-        label: 'Condensed',
+        label: 'Circles',
     },
 ];
 
@@ -63,31 +54,20 @@ const barTypes = {
     default: [
         {
             value: 'numbers',
-            label: 'Numbers',
+            label: 'Default',
         },
-        {
-            value: 'bars',
-            label: 'Bars',
-        },
+
     ],
     minimap: [
         {
             value: 'numbers',
-            label: 'Numbers',
-        },
-        {
-            value: 'bars',
-            label: 'Bars',
+            label: 'Default',
         },
     ],
     center: [
         {
             value: 'numbers',
-            label: 'Numbers',
-        },
-        {
-            value: 'bars',
-            label: 'Bars',
+            label: 'Default',
         },
     ],
     condensed: [
@@ -108,9 +88,42 @@ const useStyles = makeStyles((theme) => ({
         fontSize: '1.17em',
         marginBlockEnd: '1em',
         fontWeight: 'bold',
+        color: '#f8f9fa',
     },
     field: {
         marginBottom: 10,
+    },
+    dialog: {
+        '& .MuiDialog-paper': {
+            backgroundColor: 'rgba(26, 27, 30, 0.95)',
+            border: '2px solid rgba(55, 58, 64, 1)',
+            borderRadius: 8,
+            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.4)',
+        },
+    },
+    dialogTitle: {
+        backgroundColor: 'rgba(26, 27, 30, 0.9)',
+        color: '#f8f9fa',
+        borderBottom: '1px solid rgba(55, 58, 64, 1)',
+        '& .MuiTypography-root': {
+            color: '#f8f9fa',
+            fontWeight: 600,
+        },
+    },
+    dialogContent: {
+        backgroundColor: 'rgba(26, 27, 30, 0.8)',
+        color: '#f8f9fa',
+    },
+    dialogActions: {
+        backgroundColor: 'rgba(26, 27, 30, 0.9)',
+        borderTop: '1px solid rgba(55, 58, 64, 1)',
+        '& .MuiButton-root': {
+            color: '#298E96',
+            fontWeight: 500,
+            '&:hover': {
+                backgroundColor: 'rgba(41, 142, 150, 0.1)',
+            },
+        },
     },
 }));
 
@@ -278,12 +291,18 @@ export default () => {
     };
 
     return (
-        <Dialog fullWidth maxWidth="lg" open={isOpen} onClose={onClose}>
+        <Dialog 
+            fullWidth 
+            maxWidth="sm" 
+            open={isOpen} 
+            onClose={onClose}
+            className={classes.dialog}
+        >
             <form onSubmit={onSave}>
-                <DialogTitle>HUD Configuration</DialogTitle>
-                <DialogContent>
+                <DialogTitle className={classes.dialogTitle}>HUD Configuration</DialogTitle>
+                <DialogContent className={classes.dialogContent}>
                     <Grid container spacing={2} className={classes.form}>
-                        <Grid item xs={6}>
+                        <Grid item xs={12}>
                             <div className={classes.header}>
                                 General Settings
                             </div>
@@ -324,37 +343,7 @@ export default () => {
 
                                 {getLayoutForm()}
                             </Grid>
-                            <div className={classes.header}>
-                                Compass Settings
-                            </div>
-                            <Grid container spacing={2}>
-                                <Grid item xs={12}>
-                                    <FormControlLabel
-                                        control={
-                                            <Switch
-                                                name="hideCompassBg"
-                                                checked={state.hideCompassBg}
-                                                onChange={onChecked}
-                                            />
-                                        }
-                                        label="Hide Compass Background"
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <FormControlLabel
-                                        control={
-                                            <Switch
-                                                name="hideCrossStreet"
-                                                checked={state.hideCrossStreet}
-                                                onChange={onChecked}
-                                            />
-                                        }
-                                        label="Hide Cross Street"
-                                    />
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                        <Grid item xs={6}>
+
                             <div className={classes.header}>
                                 Status Settings
                             </div>
@@ -393,6 +382,7 @@ export default () => {
                                 </Grid>
                                 {getStatusForm()}
                             </Grid>
+
                             <div className={classes.header}>
                                 Vehicle Layout Settings
                             </div>
@@ -423,7 +413,7 @@ export default () => {
                         </Grid>
                     </Grid>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions className={classes.dialogActions}>
                     <Button onClick={onClose}>Cancel</Button>
                     <Button type="submit">Save</Button>
                 </DialogActions>

@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import NumberStatus from '../components/Number';
-import BarStatus from '../components/Bar';
+
 
 const useStyles = makeStyles((theme) => ({
     status: {
@@ -149,7 +149,7 @@ export default withTheme(() => {
                             ? `${(position.leftX + 0.0045) * 100}vw`
                             : 15,
                         top: config.minimapAnchor
-                            ? `${(position.bottomY + 0.001) * 100}vh`
+                            ? `${(position.bottomY + 0.015) * 100}vh`
                             : 2,
                     }}
                 >

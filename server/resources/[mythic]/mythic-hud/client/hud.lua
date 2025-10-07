@@ -497,7 +497,7 @@ HUD = {
 					type = type,
 					deathTime = deathTime,
 					timer = timer,
-					medicalPrice = 1500 -- (not GlobalState["Duty:ems"] or GlobalState["Duty:ems"] == 0) and 150 or 5000
+					medicalPrice = 250 -- (not GlobalState["Duty:ems"] or GlobalState["Duty:ems"] == 0) and 150 or 5000
 				},
 			})
 		end,

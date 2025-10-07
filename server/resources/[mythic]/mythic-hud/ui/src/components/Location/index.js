@@ -54,7 +54,7 @@ const useStyles = createStyles((theme) => ({
         border: `2px solid ${theme.colors.dark[6]}`,
     },
     icon: {
-        color: '#298E96', // lazy fix color match
+        color: '#0469ffff', // lazy fix color match
         fontSize: theme.fontSizes.md,
         marginRight: theme.spacing.xs,
     },

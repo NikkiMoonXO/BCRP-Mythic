@@ -12,6 +12,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
+import '@fortawesome/fontawesome-free/css/all.css';
 import "react-circular-progressbar/dist/styles.css";
 
 import Action from '../Action2';
@@ -60,16 +61,16 @@ const App = ({ hidden }) => {
         },
         palette: {
             primary: {
-                main: '#298E96',
-                light: '#36bcc7',
-                dark: '#1a5c61',
+                main: '#0469ffff',
+                light: '#4e94fdff',
+                dark: '#082a58ff',
                 contrastText: '#ffffff',
             },
             secondary: {
-                main: '#141414',
-                light: '#1c1c1c',
-                dark: '#0f0f0f',
-                contrastText: '#ffffff',
+                main: 'rgba(26, 27, 30, 0.8)',
+                light: 'rgba(26, 27, 30, 0.9)',
+                dark: 'rgba(26, 27, 30, 1)',
+                contrastText: '#f8f9fa',
             },
             error: {
                 main: '#6e1616',
@@ -87,12 +88,12 @@ const App = ({ hidden }) => {
                 dark: '#b05d1a',
             },
             info: {
-                main: '#4056b3',
-                light: '#247ba5',
+                main: '#3aaaf9',
+                light: '#3aaaf9',
                 dark: '#175878',
             },
             text: {
-                main: '#ffffff',
+                main: '#f8f9fa',
                 alt: '#A7A7A7',
                 info: '#919191',
                 light: '#ffffff',
@@ -103,9 +104,9 @@ const App = ({ hidden }) => {
                 greenDark: '#064224',
             },
             border: {
-                main: '#e0e0e008',
+                main: 'rgba(55, 58, 64, 1)',
                 light: '#ffffff',
-                dark: '#26292d',
+                dark: 'rgba(55, 58, 64, 1)',
                 input: 'rgba(255, 255, 255, 0.23)',
                 divider: 'rgba(255, 255, 255, 0.12)',
             },

@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import NumberStatus from '../components/Number';
-import BarStatus from '../components/Bar';
+
 
 const useStyles = makeStyles((theme) => ({
     status: {

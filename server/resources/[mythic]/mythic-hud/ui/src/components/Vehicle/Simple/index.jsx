@@ -1,125 +1,120 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Fade, useTheme } from '@mui/material';
+import { Fade, Grid, LinearProgress, useTheme } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import ReactHtmlParser from 'react-html-parser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { styled } from '@mui/material/styles';
+import { linearProgressClasses } from '@mui/material/LinearProgress';
+
+import rpmImg from '../../../assets/rpm.webp';
 
 const useStyles = makeStyles((theme) => ({
     wrapper: {
         position: 'absolute',
-        display: 'flex',
-        left: 0,
-        right: 0,
-        bottom: 50,
-        margin: 'auto',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        bottom: 30,
         width: 'fit-content',
-        filter: `drop-shadow(0 0 2px ${theme.palette.secondary.dark}e0)`,
-        fontSize: 30,
-        color: theme.palette.text.main,
+        fontSize: 15,
+        color: '#ffffff',
         textAlign: 'center',
-        height: 155,
     },
-    dashIcon: {
-        textAlign: 'center',
-        display: 'block',
-        fontSize: 16,
-        lineHeight: '45px',
-        padding: 5,
-        fontSize: 30,
-        zIndex: 5,
 
-        '&.seatbelt': {
-            color: `${theme.palette.secondary.light}80`,
-            display: 'block',
-
-            '&.active': {
-                animation: 'flash linear 3s infinite',
-                color: theme.palette.warning.main,
-            },
-        },
-        '&.checkEngine': {
-            color: `${theme.palette.secondary.light}80`,
-            display: 'block',
-
-            '&.active': {
-                animation: 'flash linear 1s infinite',
-                color: theme.palette.error.main,
-            },
-        },
-        '&.cruise': {
-            color: `${theme.palette.secondary.light}80`,
-            display: 'block',
-
-            '&.active': {
-                color: theme.palette.info.main,
-            },
-        },
-    },
-    left: {
-        height: '100%',
-        width: 100,
-        position: 'relative',
-    },
-    right: {
-        paddingLeft: 10,
-    },
-    speedText: {
-        fontSize: 65,
-        lineHeight: '65px',
-        height: 'fit-content',
-        width: 'fit-content',
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-        margin: 'auto',
-    },
-    speedMeasure: {
-        fontSize: 22,
-        height: 'fit-content',
-        width: 'fit-content',
-        position: 'absolute',
-        bottom: 18,
-        right: 2,
-    },
-    bars: {
+    cluster: {
         display: 'flex',
-        height: '100%',
+        alignItems: 'center',
+        borderRadius: 6,
+        padding: '8px 16px',
+        minHeight: 40,
+        gap: 12,
+        transform: 'scale(1)',
+        transformOrigin: 'center bottom',
+    },
+
+    fuelSection: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 4,
+        flex: 1,
+        minWidth: 120,
+        marginLeft: '0.25cm',
+    },
+
+    speedRow: {
+        display: 'flex',
+        alignItems: 'baseline',
+        gap: 4,
+        marginLeft: '0.25cm',
+    },
+
+    speedValue: {
+        fontSize: 32,
+        fontWeight: 700,
+        color: '#ffffff',
+        fontFamily: '"Roboto Mono", "Arial", monospace',
+        lineHeight: 1,
+    },
+
+    speedUnit: {
+        fontSize: 12,
+        color: 'rgba(255, 255, 255, 0.7)',
+        fontWeight: 400,
+        textTransform: 'uppercase',
+        letterSpacing: '1px',
+    },
+
+    fuelRow: {
+        display: 'flex',
+        alignItems: 'center',
         gap: 8,
     },
-    vehBar: {
-        height: '100%',
+
+    fuelIcon: {
+        width: 16,
+        height: 16,
+        color: 'rgba(255, 255, 255, 0.7)',
+        fontSize: 14,
+    },
+
+    fuelBar: {
+        width: 100,
+        height: 4,
+        background: 'rgba(255, 255, 255, 0.2)',
+        borderRadius: 2,
+        overflow: 'hidden',
+        position: 'relative',
+    },
+
+    statusSection: {
         display: 'flex',
-        flexFlow: 'column',
+        flexDirection: 'column',
+        alignItems: 'center',
         gap: 4,
     },
-    barBg: {
-        flex: 1,
-        borderRadius: 8,
-        borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0,
-        position: 'relative',
-        background: `${theme.palette.secondary.dark}80`,
-    },
-    barFill: {
-        borderRadius: 8,
-        borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0,
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        margin: 'auto',
-        transition: 'color ease-in 0.15s',
 
-        '&.nos': {
-            background: '#0078ec',
-        },
+    statusIcon: {
+        width: 20,
+        height: 20,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: 12,
+        color: 'rgba(255, 255, 255, 0.4)',
+        transition: 'all 0.2s ease',
     },
-    barIcon: {
-        fontSize: 16,
+
+    statusIconActive: {
+        color: '#ef4444',
+    },
+
+    statusIconWarning: {
+        color: '#f59e0b',
+    },
+
+    statusIconInfo: {
+        color: '#3b82f6',
     },
 }));
 
@@ -141,13 +136,17 @@ export default () => {
     const fuelHide = useSelector((state) => state.vehicle.fuelHide);
     const fuel = useSelector((state) => state.vehicle.fuel);
 
+    const rpm = useSelector((state) => state.vehicle.rpm);
+
     const nos = useSelector((state) => state.vehicle.nos);
 
     const isShiftedUp = () => {
         return (
             config.layout == 'default' ||
             config.layout == 'center' ||
-            (config.layout == 'minimap' && config.buffsAnchor2)
+            (config.layout == 'minimap' && config.buffsAnchor2) ||
+            (config.layout == 'condensed' &&
+                config.condenseAlignment == 'center')
         );
     };
 
@@ -165,94 +164,91 @@ export default () => {
         }
     }, [speed]);
 
+    const FuelBar = styled('div')(({ theme, value }) => ({
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        height: '100%',
+        width: `${value}%`,
+        background: value >= 15 ? '#ffffff' : value >= 5 ? '#f59e0b' : '#ef4444',
+        borderRadius: 2,
+        transition: 'all 0.3s ease',
+    }));
+
+    const NosBar = styled('div')(({ theme, value }) => ({
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        height: '100%',
+        width: `${value}%`,
+        background: 'linear-gradient(90deg, #06b6d4 0%, #3b82f6 50%, #8b5cf6 100%)',
+        borderRadius: 2,
+        transition: 'all 0.3s ease',
+    }));
+
     return (
         <Fade in={showing}>
             <div
                 className={classes.wrapper}
-                style={{ bottom: isShiftedUp() ? 65 : 0 }}
+                style={{ bottom: isShiftedUp() ? 45 : 0 }}
             >
-                <div className={classes.left}>
-                    {ignition ? (
-                        <Fragment>
-                            <div className={classes.speedText}>
-                                {ReactHtmlParser(speedStr)}
-                            </div>
-                            <div className={classes.speedMeasure}>
-                                {speedMeasure}
-                            </div>
-                        </Fragment>
-                    ) : (
-                        <div className={classes.speedText}>Off</div>
-                    )}
-                </div>
-                <div className={classes.right}>
-                    <span
-                        className={`${classes.dashIcon} checkEngine ${
-                            Boolean(checkEngine) ? 'active' : ''
-                        }`}
-                    >
-                        <FontAwesomeIcon icon={['fas', 'car-burst']} />
-                    </span>
-                    <span
-                        className={`${classes.dashIcon} cruise ${
-                            Boolean(cruise) ? 'active' : ''
-                        }`}
-                    >
-                        <FontAwesomeIcon icon={['fas', 'gauge']} />
-                    </span>
-                    {!seatbeltHide && (
-                        <span
-                            className={`${classes.dashIcon} seatbelt ${
-                                !seatbelt ? 'active' : ''
-                            }`}
-                        >
-                            <FontAwesomeIcon
-                                icon={['fas', 'triangle-exclamation']}
-                            />
-                        </span>
-                    )}
-                </div>
-                <div className={classes.bars}>
+                <div className={classes.cluster}>
+                    {/* Fuel Gauge with Speed */}
                     {ignition && !Boolean(fuelHide) && (
-                        <div className={classes.vehBar}>
-                            <div className={classes.barBg}>
-                                <div
-                                    className={classes.barFill}
-                                    style={{
-                                        height: `${fuel}%`,
-                                        animation:
-                                            fuel <= 10
-                                                ? 'flash linear 0.5s infinite'
-                                                : 'none',
-                                        background:
-                                            fuel >= 50
-                                                ? theme.palette.success.main
-                                                : fuel >= 10
-                                                ? theme.palette.warning.main
-                                                : fuel >= 0
-                                                ? theme.palette.error.main
-                                                : theme.palette.primary.main,
-                                    }}
-                                ></div>
+                        <div className={classes.fuelSection}>
+                            <div className={classes.speedRow}>
+                                <div className={classes.speedValue}>
+                                    {ignition ? speed.toString().padStart(3, '0') : '---'}
+                                </div>
+                                <div className={classes.speedUnit}>
+                                    {ignition ? speedMeasure : 'OFF'}
+                                </div>
                             </div>
-                            <div className={classes.barIcon}>
-                                <FontAwesomeIcon icon="gas-pump" />
+                            <div className={classes.fuelRow}>
+                                <div className={classes.fuelIcon}>
+                                    <FontAwesomeIcon icon={['fas', 'gas-pump']} />
+                                </div>
+                                <div className={classes.fuelBar}>
+                                    <FuelBar value={fuel} />
+                                </div>
                             </div>
+                            {/* NOS Bar */}
+                            {nos > 0 && (
+                                <div className={classes.fuelRow}>
+                                    <div className={classes.fuelIcon}>
+                                        <FontAwesomeIcon icon={['fas', 'bolt']} />
+                                    </div>
+                                    <div className={classes.fuelBar}>
+                                        <NosBar value={nos} />
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
-                    {ignition && nos > 0 && (
-                        <div className={classes.vehBar}>
-                            <div className={classes.barBg}>
-                                <div
-                                    className={`${classes.barFill} nos`}
-                                    style={{ height: `${nos}%` }}
-                                ></div>
+
+                    {/* Status Icons */}
+                    <div className={classes.statusSection}>
+                        {/* Seatbelt Warning */}
+                        {!seatbeltHide && !seatbelt && (
+                            <div className={`${classes.statusIcon} ${classes.statusIconWarning}`}>
+                                <FontAwesomeIcon icon={['fas', 'triangle-exclamation']} />
                             </div>
-                            <div className={classes.barIcon}>
-                                <FontAwesomeIcon icon="wine-bottle" />
+                        )}
+
+                        {/* Check Engine */}
+                        {Boolean(checkEngine) && (
+                            <div className={`${classes.statusIcon} ${classes.statusIconActive}`}>
+                                <FontAwesomeIcon icon={['fas', 'car-burst']} />
                             </div>
-                        </div>
-                    )}
+                        )}
+
+                        {/* Cruise Control */}
+                        {Boolean(cruise) && (
+                            <div className={`${classes.statusIcon} ${classes.statusIconInfo}`}>
+                                <FontAwesomeIcon icon={['fas', 'gauge']} />
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </Fade>

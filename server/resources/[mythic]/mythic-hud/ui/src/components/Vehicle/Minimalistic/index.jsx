@@ -4,10 +4,6 @@ import { Fade, useTheme } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import ReactHtmlParser from 'react-html-parser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-    CircularProgressbarWithChildren,
-    buildStyles,
-} from 'react-circular-progressbar';
 
 const useStyles = makeStyles((theme) => ({
     wrapper: {
@@ -22,75 +18,108 @@ const useStyles = makeStyles((theme) => ({
         fontSize: 30,
         color: theme.palette.text.main,
         textAlign: 'center',
-        height: 125,
-        width: 125,
+        height: 155,
     },
-    fuelGauge: {
-        position: 'absolute',
-        height: 125,
-        width: 125,
-        left: -20,
-        top: 0,
-    },
-    fuelIcon: {
-        fontSize: 12,
-        position: 'absolute',
-        bottom: 5,
-        left: 22,
-    },
-    nosGauge: {
-        position: 'absolute',
-        height: 125,
-        width: 125,
-        right: -20,
-        top: 0,
-    },
-    nosIcon: {
-        fontSize: 12,
-        position: 'absolute',
-        bottom: 5,
-        right: 22,
-    },
-    speed: {
-        fontSize: 40,
-        lineHeight: '30PX',
+    dashIcon: {
+        textAlign: 'center',
+        display: 'block',
+        fontSize: 16,
+        lineHeight: '45px',
+        padding: 5,
+        fontSize: 30,
+        zIndex: 5,
 
-        '& small': {
-            fontSize: 16,
+        '&.seatbelt': {
+            color: `${theme.palette.secondary.light}80`,
             display: 'block',
+
+            '&.active': {
+                animation: 'flash linear 3s infinite',
+                color: theme.palette.warning.main,
+            },
+        },
+        '&.checkEngine': {
+            color: `${theme.palette.secondary.light}80`,
+            display: 'block',
+
+            '&.active': {
+                animation: 'flash linear 1s infinite',
+                color: theme.palette.error.main,
+            },
+        },
+        '&.cruise': {
+            color: `${theme.palette.secondary.light}80`,
+            display: 'block',
+
+            '&.active': {
+                color: theme.palette.info.main,
+            },
         },
     },
-    off: {
-        fontSize: 18,
-        color: theme.palette.text.alt,
+    left: {
+        height: '100%',
+        width: 100,
+        position: 'relative',
     },
-    checkEngine: {
+    right: {
+        paddingLeft: 10,
+    },
+    speedText: {
+        fontSize: 65,
+        lineHeight: '65px',
+        height: 'fit-content',
         width: 'fit-content',
-        height: 'fit-cotnent',
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        margin: 'auto',
+    },
+    speedMeasure: {
+        fontSize: 22,
+        height: 'fit-content',
+        width: 'fit-content',
+        position: 'absolute',
+        bottom: 18,
+        right: 2,
+    },
+    bars: {
+        display: 'flex',
+        height: '100%',
+        gap: 8,
+    },
+    vehBar: {
+        height: '100%',
+        display: 'flex',
+        flexFlow: 'column',
+        gap: 4,
+    },
+    barBg: {
+        flex: 1,
+        borderRadius: 8,
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
+        position: 'relative',
+        background: `${theme.palette.secondary.dark}80`,
+    },
+    barFill: {
+        borderRadius: 8,
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
         position: 'absolute',
         bottom: 0,
-        fontSize: 18,
-        color: theme.palette.error.light,
-        animation: 'flash linear 1s infinite',
+        left: 0,
+        right: 0,
+        margin: 'auto',
+        transition: 'color ease-in 0.15s',
+
+        '&.nos': {
+            background: '#0078ec',
+        },
     },
-    seatBelt: {
-        width: 'fit-content',
-        height: 'fit-cotnent',
-        position: 'absolute',
-        top: -20,
-        right: 10,
-        fontSize: 18,
-        color: theme.palette.warning.light,
-        animation: 'flash linear 3s infinite',
-    },
-    cruise: {
-        width: 'fit-content',
-        height: 'fit-cotnent',
-        position: 'absolute',
-        top: -20,
-        left: 10,
-        fontSize: 18,
-        color: theme.palette.info.light,
+    barIcon: {
+        fontSize: 16,
     },
 }));
 
@@ -112,19 +141,29 @@ export default () => {
     const fuelHide = useSelector((state) => state.vehicle.fuelHide);
     const fuel = useSelector((state) => state.vehicle.fuel);
 
-    const rpm = useSelector((state) => state.vehicle.rpm);
-
     const nos = useSelector((state) => state.vehicle.nos);
 
     const isShiftedUp = () => {
         return (
             config.layout == 'default' ||
             config.layout == 'center' ||
-            (config.layout == 'minimap' && config.buffsAnchor2) ||
-            (config.layout == 'condensed' &&
-                config.condenseAlignment == 'center')
+            (config.layout == 'minimap' && config.buffsAnchor2)
         );
     };
+
+    const [speedStr, setSpeedStr] = useState(speed.toString());
+
+    useEffect(() => {
+        if (speed === 0) {
+            setSpeedStr(`<span class="filler">000</span>`);
+        } else if (speed < 10) {
+            setSpeedStr(`<span class="filler">00</span>${speed.toString()}`);
+        } else if (speed < 100) {
+            setSpeedStr(`<span class="filler">0</span>${speed.toString()}`);
+        } else {
+            setSpeedStr(speed.toString());
+        }
+    }, [speed]);
 
     return (
         <Fade in={showing}>
@@ -132,93 +171,89 @@ export default () => {
                 className={classes.wrapper}
                 style={{ bottom: isShiftedUp() ? 65 : 0 }}
             >
-                {ignition && !Boolean(fuelHide) && (
-                    <div className={classes.fuelGauge}>
-                        <CircularProgressbarWithChildren
-                            value={fuel}
-                            strokeWidth={4}
-                            circleRatio={0.25}
-                            styles={buildStyles({
-                                strokeLinecap: 'butt',
-                                rotation: 0.635,
-                                position: 'relative',
-                                trailColor: theme.palette.secondary.dark,
-                                pathColor:
-                                    fuel >= 50
-                                        ? theme.palette.success.main
-                                        : fuel >= 25
-                                        ? theme.palette.warning.main
-                                        : theme.palette.error.main,
-                            })}
-                        >
-                            <FontAwesomeIcon
-                                className={classes.fuelIcon}
-                                icon={['fas', 'gas-pump']}
-                            />
-                        </CircularProgressbarWithChildren>
-                    </div>
-                )}
-
-                {Boolean(ignition) ? (
-                    <CircularProgressbarWithChildren
-                        value={ignition ? rpm * 100 : 0}
-                        strokeWidth={6}
-                        circleRatio={0.75}
-                        styles={buildStyles({
-                            strokeLinecap: 'butt',
-                            rotation: 0.625,
-                            trailColor: theme.palette.secondary.dark,
-                            pathColor: theme.palette.primary.main,
-                            position: 'relative',
-                        })}
+                <div className={classes.left}>
+                    {ignition ? (
+                        <Fragment>
+                            <div className={classes.speedText}>
+                                {ReactHtmlParser(speedStr)}
+                            </div>
+                            <div className={classes.speedMeasure}>
+                                {speedMeasure}
+                            </div>
+                        </Fragment>
+                    ) : (
+                        <div className={classes.speedText}>Off</div>
+                    )}
+                </div>
+                <div className={classes.right}>
+                    <span
+                        className={`${classes.dashIcon} checkEngine ${
+                            Boolean(checkEngine) ? 'active' : ''
+                        }`}
                     >
-                        <div className={classes.speed}>
-                            {speed}
-                            <small>{speedMeasure}</small>
-                        </div>
-                        {Boolean(checkEngine) && (
-                            <span className={classes.checkEngine}>
-                                <FontAwesomeIcon
-                                    icon={['fas', 'engine-warning']}
-                                />
-                            </span>
-                        )}
-                        {!Boolean(seatbelt) && !Boolean(seatbeltHide) && (
-                            <span className={classes.seatBelt}>
-                                <FontAwesomeIcon
-                                    icon={['fas', 'triangle-exclamation']}
-                                />
-                            </span>
-                        )}
-                        {Boolean(cruise) && (
-                            <span className={classes.cruise}>
-                                <FontAwesomeIcon icon={['fas', 'gauge']} />
-                            </span>
-                        )}
-                    </CircularProgressbarWithChildren>
-                ) : null}
-                {ignition && nos > 0 && (
-                    <div className={classes.nosGauge}>
-                        <CircularProgressbarWithChildren
-                            value={nos}
-                            strokeWidth={4}
-                            counterClockwise
-                            circleRatio={0.25}
-                            styles={buildStyles({
-                                strokeLinecap: 'butt',
-                                rotation: -0.635,
-                                position: 'relative',
-                                trailColor: theme.palette.secondary.dark,
-                                pathColor: '#0078ec',
-                            })}
+                        <FontAwesomeIcon icon={['fas', 'car-burst']} />
+                    </span>
+                    <span
+                        className={`${classes.dashIcon} cruise ${
+                            Boolean(cruise) ? 'active' : ''
+                        }`}
+                    >
+                        <FontAwesomeIcon icon={['fas', 'gauge']} />
+                    </span>
+                    {!seatbeltHide && (
+                        <span
+                            className={`${classes.dashIcon} seatbelt ${
+                                !seatbelt ? 'active' : ''
+                            }`}
                         >
                             <FontAwesomeIcon
-                                className={classes.nosIcon}
-                                icon="wine-bottle"
+                                icon={['fas', 'triangle-exclamation']}
                             />
-                        </CircularProgressbarWithChildren>
-                    </div>
-                )}
+                        </span>
+                    )}
+                </div>
+                <div className={classes.bars}>
+                    {ignition && !Boolean(fuelHide) && (
+                        <div className={classes.vehBar}>
+                            <div className={classes.barBg}>
+                                <div
+                                    className={classes.barFill}
+                                    style={{
+                                        height: `${fuel}%`,
+                                        animation:
+                                            fuel <= 10
+                                                ? 'flash linear 0.5s infinite'
+                                                : 'none',
+                                        background:
+                                            fuel >= 50
+                                                ? theme.palette.success.main
+                                                : fuel >= 10
+                                                ? theme.palette.warning.main
+                                                : fuel >= 0
+                                                ? theme.palette.error.main
+                                                : theme.palette.primary.main,
+                                    }}
+                                ></div>
+                            </div>
+                            <div className={classes.barIcon}>
+                                <FontAwesomeIcon icon="gas-pump" />
+                            </div>
+                        </div>
+                    )}
+                    {ignition && nos > 0 && (
+                        <div className={classes.vehBar}>
+                            <div className={classes.barBg}>
+                                <div
+                                    className={`${classes.barFill} nos`}
+                                    style={{ height: `${nos}%` }}
+                                ></div>
+                            </div>
+                            <div className={classes.barIcon}>
+                                <FontAwesomeIcon icon="wine-bottle" />
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
         </Fade>
     );

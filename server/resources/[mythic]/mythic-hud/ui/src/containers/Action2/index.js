@@ -8,43 +8,54 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const useStyles = makeStyles((theme) => ({
     container: {
-        width: 80,
-        padding: 5,
-        lineHeight: '25px',
         display: 'flex',
-        color: theme.palette.text.main,
-        background: `${theme.palette.secondary.dark}80`,
-        borderLeft: `4px solid ${theme.palette.info.main}`,
-        borderTopLeftRadius: 4,
-        borderBottomLeftRadius: 4,
-        height: 'fit-content',
+        alignItems: 'center',
+        whiteSpace: 'nowrap',
+        backgroundColor: 'rgba(26, 27, 30, 0.8)', // theme.colors.dark[7] equivalent
+        borderRadius: 4, // theme.radius.sm equivalent
+        padding: 12, // increased from 8
+        boxShadow: '0 10px 25px rgba(0, 0, 0, 0.25)', // theme.shadows.lg equivalent
+        height: 45, // increased from 35
+        border: '2px solid rgba(55, 58, 64, 1)', // theme.colors.dark[6] equivalent
         position: 'absolute',
         bottom: 240,
         right: 0,
         left: 0,
-        textShadow: '0 0 3px #000000',
         margin: 'auto',
         width: 'fit-content',
-        fontSize: 24,
     },
     icon: {
+        color: '#0469ffff',
+        fontSize: 18, // increased from 16
+        marginRight: 10, // increased from 8
         display: 'block',
-        padding: 5,
         paddingLeft: 0,
-        borderRight: `1px solid ${theme.palette.border.divider}`,
     },
     text: {
-        padding: 5,
+        color: '#f8f9fa', // theme.colors.gray[0] equivalent
+        fontSize: 18, // increased from 16
+        fontWeight: 500,
+        padding: 6, // increased from 5
         '&.low': {
             animation: '$flash linear 1s infinite',
         },
     },
+    '@keyframes flash': {
+        '0%, 100%': {
+            opacity: 1,
+        },
+        '50%': {
+            opacity: 0.5,
+        },
+    },
     wrapper: {
-        color: theme.palette.text.main,
-        textShadow: '0 0 3px #000000',
-        borderBottom: `3px solid ${theme.palette.info.main}`,
+        color: '#f8f9fa',
+        backgroundColor: 'rgba(26, 27, 30, 0.8)',
+        borderRadius: 4,
         padding: 10,
-        height: 'fit-content',
+        boxShadow: '0 10px 25px rgba(0, 0, 0, 0.25)',
+        height: 35,
+        border: '2px solid rgba(55, 58, 64, 1)',
         position: 'absolute',
         bottom: '15%',
         right: 0,
@@ -56,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
             position: 'absolute',
             left: -15,
             bottom: -15,
-            color: theme.palette.info.main,
+            color: '#298E96',
             fontSize: 28,
             zIndex: 100,
         },
@@ -75,7 +86,7 @@ const useStyles = makeStyles((theme) => ({
     },
     key: {
         padding: 5,
-        color: theme.palette.primary.main,
+        color: '#0469ffff',
         borderRadius: 2,
         textTransform: 'capitalize',
         '&::before': {

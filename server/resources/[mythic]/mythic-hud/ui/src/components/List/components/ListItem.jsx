@@ -17,19 +17,31 @@ const useStyles = makeStyles((theme) => ({
     wrapper: {
         background: theme.palette.secondary.main,
         transition: 'background ease-in 0.15s',
+        minHeight: 48,
+        padding: '8px 16px',
         '&.clickable:hover': {
             background: theme.palette.secondary.dark,
         },
     },
     action: {
         fontSize: 14,
+        padding: 4,
+        minWidth: 32,
+        height: 32,
+        margin: '0 2px',
     },
     phw: {
         pointerEvents: 'none !important',
+        display: 'flex',
+        alignItems: 'center',
     },
     ph: {
         fontSize: 14,
         color: `${theme.palette.primary.main} !important`,
+        padding: 4,
+        minWidth: 32,
+        height: 32,
+        margin: '0 2px',
     },
 }));
 

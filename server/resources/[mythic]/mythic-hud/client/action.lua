@@ -1,7 +1,8 @@
 ACTION = {
 	Show = function(self, id, message, duration)
+	duration = duration or 3000
 		local formattedMessage = string.gsub(
-			message,
+			tostring(message or ""),
 			"{keybind}([A-Za-z!\"#$%&'()*+,-./[\\%]^_`|~]+){/keybind}",
 			function(key)
 				local keyName = Keybinds:GetKey(key) or "Unknown"
@@ -16,6 +17,11 @@ ACTION = {
 				message = formattedMessage,
 			},
 		})
+		if duration and tonumber(duration) then
+			SetTimeout(tonumber(duration), function()
+				self:Hide(id)
+			end)
+		end
 	end,
 	Hide = function(self, id)
 		SendNUIMessage({

@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import NumberStatus from '../components/Number';
-import BarStatus from '../components/Bar';
 import CircleStatus from '../components/Circle';
 import VOIP from '../components/VOIP';
 

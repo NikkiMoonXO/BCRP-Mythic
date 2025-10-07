@@ -12,36 +12,33 @@ const NotificationContainer = styled(Paper, {
     shouldForwardProp: (prop) =>
         prop !== 'notificationType' && prop !== 'customStyle',
 })(({ theme, notificationType, customStyle }) => ({
-    borderRadius: theme.shape.borderRadius,
-    background:
-        customStyle?.alert?.background || theme.palette.background.paper,
-    color: customStyle?.alert?.color || theme.palette.text.primary,
-    boxShadow: 'rgba(0, 0, 0, 0.08) 0px 3px 12px',
+    borderRadius: 4, // theme.radius.sm equivalent
+    background: 'rgba(26, 27, 30, 0.8)', // theme.colors.dark[7] equivalent
+    color: '#f8f9fa', // theme.colors.gray[0] equivalent
+    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.25)', // theme.shadows.lg equivalent
+    border: '2px solid rgba(55, 58, 64, 1)', // theme.colors.dark[6] equivalent
     overflow: 'hidden',
     position: 'relative',
-    transition: 'all 0.2s ease',
-    borderLeft: `3px solid ${
-        customStyle?.alert?.borderColor ||
-        (notificationType === 'success' && theme.palette.success.main) ||
-        (notificationType === 'warning' && theme.palette.warning.main) ||
-        (notificationType === 'error' && theme.palette.error.main) ||
-        theme.palette.info.main
-    }`,
+    transition: 'all 0.3s ease',
     '&:hover': {
-        boxShadow: 'rgba(0, 0, 0, 0.12) 0px 5px 15px',
+        transform: 'translateY(-2px)',
+        boxShadow: '0 15px 35px rgba(0, 0, 0, 0.4)',
     },
 }));
 
 const Header = styled(Grid)(({ theme }) => ({
-    padding: `${theme.spacing(0.75)} ${theme.spacing(1.5)}`,
-    borderBottom: `1px solid ${theme.palette.divider}`,
+    padding: 8, // theme.spacing.xs equivalent
+    borderBottom: '1px solid rgba(55, 58, 64, 1)', // theme.colors.dark[6] equivalent
     alignItems: 'center',
+    height: 35,
 }));
 
 const Body = styled(Box)(({ theme, customStyle }) => ({
-    padding: theme.spacing(1.5),
-    fontSize: '0.9rem',
-    lineHeight: 1.4,
+    padding: 8, // theme.spacing.xs equivalent
+    fontSize: 16, // theme.fontSizes.md equivalent
+    lineHeight: 1.5,
+    color: '#f8f9fa', // theme.colors.gray[0] equivalent
+    fontWeight: 500,
     ...customStyle,
 }));
 
@@ -51,46 +48,37 @@ const ProgressBar = styled(Box, {
         prop !== 'progress' &&
         prop !== 'customStyle',
 })(({ theme, notificationType, progress, customStyle }) => ({
-    height: 2,
+    height: 3,
     width: `${progress}%`,
-    background:
-        customStyle?.background ||
-        (notificationType === 'success' && theme.palette.success.main) ||
-        (notificationType === 'warning' && theme.palette.warning.main) ||
-        (notificationType === 'error' && theme.palette.error.main) ||
-        theme.palette.info.main,
+    background: '#0469ffff', // consistent with theme color
     transition: 'width linear 0.1s',
+    borderRadius: '0 0 4px 4px', // match container border radius
 }));
 
 const StickyIcon = styled(FontAwesomeIcon)(({ theme }) => ({
-    marginRight: theme.spacing(0.5),
-    fontSize: '0.7rem',
-    opacity: 0.7,
+    marginRight: 8, // theme.spacing.xs equivalent
+    fontSize: 16, // theme.fontSizes.md equivalent
+    color: '#0469ffff',
 }));
 
 const TypeIcon = styled(Box)(({ theme, notificationType }) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color:
-        notificationType === 'success'
-            ? theme.palette.success.main
-            : notificationType === 'warning'
-            ? theme.palette.warning.main
-            : notificationType === 'error'
-            ? theme.palette.error.main
-            : theme.palette.info.main,
-    marginRight: theme.spacing(0.75),
+    color: '#0469ffff',
+    fontSize: 16, // theme.fontSizes.md equivalent
+    marginRight: 8, // theme.spacing.xs equivalent
     '& svg': {
-        fontSize: '0.875rem',
+        fontSize: 16, // theme.fontSizes.md equivalent
     },
 }));
 
 const TimeStamp = styled(Typography)(({ theme }) => ({
-    fontSize: '0.7rem',
-    color: theme.palette.text.secondary,
+    fontSize: 16, // theme.fontSizes.md equivalent
+    color: '#f8f9fa', // theme.colors.gray[0] equivalent
     display: 'flex',
     alignItems: 'center',
+    fontWeight: 500,
 }));
 
 export default ({ notification, animationDelay = 0 }) => {

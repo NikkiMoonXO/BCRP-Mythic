@@ -9,32 +9,55 @@ import useInterval from 'react-useinterval';
 
 const useStyles = makeStyles((theme) => ({
     container: {
-        width: 36,
-        height: 36,
-        lineHeight: '26px',
-        fontSize: 22,
+        width: 32,
+        height: 32,
         marginBottom: 4,
         textAlign: 'center',
+        position: 'relative',
+        borderRadius: 8,
+        overflow: 'hidden',
+        boxShadow: '0 3px 8px rgba(0, 0, 0, 0.15)',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        '&:hover': {
+            transform: 'translateY(-1px)',
+        },
     },
     icon: {
         width: '100%',
-        height: 'calc(100% - 4px)',
-        fontSize: 22,
-        background: `${theme.palette.secondary.dark}80`,
-        padding: 5,
+        height: '100%',
+        fontSize: 14,
+        background: 'transparent',
+        backdropFilter: 'blur(10px)',
+        border: `1px solid ${theme.palette.secondary.light}30`,
+        borderRadius: 8,
+        padding: 6,
         position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: `linear-gradient(180deg, #667eea 0%, #764ba2 50%, #f093fb 100%)`,
+            opacity: 0.6,
+            zIndex: 1,
+        },
     },
     fa: {
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-        margin: 'auto',
         fontSize: (buff) =>
             Boolean(buff.override) && `${buff?.override ?? ''}`.length > 2
-                ? '0.85rem'
-                : '1rem',
+                ? '0.55rem'
+                : '0.75rem',
+        color: theme.palette.common.white,
+        filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3))',
+        fontWeight: 500,
+        position: 'relative',
+        zIndex: 2,
     },
 }));
 
@@ -42,17 +65,6 @@ export default withTheme(({ buff }) => {
     const classes = useStyles(buff);
     const buffDefs = useSelector((state) => state.status.buffDefs);
     const buffDef = buffDefs[buff.buff];
-
-    const BuffProggressBar = styled(LinearProgress)(({ theme }) => ({
-        height: 4,
-        width: '100%',
-        [`&.${linearProgressClasses.colorPrimary}`]: {
-            background: theme.palette.secondary.dark,
-        },
-        [`& .${linearProgressClasses.bar}`]: {
-            background: `linear-gradient(to right, #a20b61, #e6bc02)`,
-        },
-    }));
 
     const [pct, setPct] = useState(Math.floor(Date.now() / 1000) - buff?.startTime);
     useInterval(
@@ -62,10 +74,34 @@ export default withTheme(({ buff }) => {
         pct > buff.val ? null : (Boolean(buff?.options?.customInterval) ? buff?.options?.customInterval : 1000),
     );
 
+    // Calculate remaining time percentage
+    const remainingPercentage = Math.max(0, Math.min(100, 
+        Math.floor(((buff.val - (pct > 0 ? (pct - 1) : pct)) / buff.val) * 100)
+    ));
+
     if (pct > buff.val) return null;
     return (
         <div className={classes.container}>
-            <div className={classes.icon}>
+            <div 
+                className={classes.icon}
+                style={{
+                    '--fill-height': `${remainingPercentage}%`,
+                }}
+            >
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: `linear-gradient(180deg, #667eea 0%, #764ba2 50%, #f093fb 100%)`,
+                        opacity: 0.7,
+                        zIndex: 1,
+                        clipPath: `polygon(0 ${100 - remainingPercentage}%, 100% ${100 - remainingPercentage}%, 100% 100%, 0% 100%)`,
+                        transition: 'clip-path 0.3s ease-out',
+                    }}
+                />
                 {Boolean(buff.override) ? (
                     <span className={classes.fa}>{buff.override}</span>
                 ) : (
@@ -75,10 +111,6 @@ export default withTheme(({ buff }) => {
                     />
                 )}
             </div>
-            <BuffProggressBar
-                variant="determinate"
-                value={Math.floor(((buff.val - (pct > 0 ? (pct - 1) : pct)) / buff.val) * 100)}
-            />
         </div>
     );
 });
