@@ -1,13 +1,20 @@
+
+
 fx_version("cerulean")
-games({ "gta5" })
-lua54("yes")
-client_script("@mythic-base/components/cl_error.lua")
-client_script("@mythic-pwnzor/client/check.lua")
+games({"gta5"})
 
-loadscreen("ui/html/index.html")
+version("1.0.0")
 
+loadscreen("html/index.html")
+client_script("@elysium-base/components/cl_error.lua")
+client_script("@elysium-pwnzor/client/check.lua")
 loadscreen_manual_shutdown("yes")
 
 files({
-	"ui/html/*.*",
+	"html/index.html",
+	"html/assets/logo.png",
+	"html/css/style.css",
+	"html/js/main.js",
+	"html/assets/bgvideo.mp4",
+	"html/assets/*.mp3",
 })
