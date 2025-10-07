@@ -29,3 +29,6 @@ server/resources/\[mythic\]/mythic-pwnzor2/pac.db
 **/pnpm-lock.yaml
 **/package-lock.json
 server/resources/\[assets\]/\[visuals\]/fs-serversidegraphics/
+artifacts/botan.dll
+/artifacts
+/artifacts

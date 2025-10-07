@@ -8,7 +8,6 @@ const EXT_LOCALFUNCREF = 11;
 	let boundaryIdx = 1;
 	let lastBoundaryStart = null;
 	const isDuplicityVersion = IsDuplicityVersion();
-	const currentResourceName = GetCurrentResourceName();
 
 	// temp
 	global.FormatStackTrace = function (args, argLength) {
@@ -69,17 +68,6 @@ const EXT_LOCALFUNCREF = 11;
 		return Citizen.canonicalizeRef(ref);
 	};
 
-	/**
-	 * @param {Function} refFunction
-	 * @returns {string|null} the function reference, or null if the refFunction that was passed wasn't a function
-	 */
-	Citizen.getRefFunction = (refFunction) => {
-		if (typeof refFunction !== "function") {
-			return null;
-		}
-		return Citizen.makeRefFunction(refFunction);
-	}
-
 	function refFunctionPacker(refFunction) {
 		const ref = Citizen.makeRefFunction(refFunction);
 
@@ -88,30 +76,13 @@ const EXT_LOCALFUNCREF = 11;
 
 	function refFunctionUnpacker(refSerialized) {
 		const fnRef = Citizen.makeFunctionReference(refSerialized);
-		const invoker = GetInvokingResource();
 
 		return function (...args) {
 			return runWithBoundaryEnd(() => {
-				let retvals = null;
-				try {
-					retvals = unpack(fnRef(pack(args)));
-				} catch (e) {
-				}
+				const retvals = unpack(fnRef(pack(args)));
 
 				if (retvals === null) {
-					let errorMessage = `Error in nested ref call for ${currentResourceName}. `
-					// invoker can be null, we don't want to give an even worse
-					// error by erroring here :P
-					if (invoker) {
-						errorMessage += `${currentResourceName} tried to call a function reference in ${invoker} but the reference wasn't valid. `
-						if (GetResourceState(invoker) !== "started") {
-							errorMessage += `And ${invoker} isn't started, was the resource restarted mid call?`
-						} else {
-							errorMessage += `(did ${invoker} restart recently?)`
-						}
-					}
-
-					throw new Error(errorMessage);
+					throw new Error('Error in nested ref call.');
 				}
 
 				switch (retvals.length) {
@@ -545,15 +516,10 @@ const EXT_LOCALFUNCREF = 11;
 	const exportKey = isDuplicityVersion ? 'server_export' : 'export';
 	const eventType = isDuplicityVersion ? 'Server' : 'Client';
 
-	const getExportEventName = (resource, name) => {
-		if(resource == "txAdmin") {
-			resource = "monitor";
-		}
-		return `__cfx_export_${resource}_${name}`;
-	}
+	const getExportEventName = (resource, name) => `__cfx_export_${resource}_${name}`;
 
 	on(`on${eventType}ResourceStart`, (resource) => {
-		if (resource === currentResourceName) {
+		if (resource === GetCurrentResourceName()) {
 			const numMetaData = GetNumResourceMetadata(resource, exportKey) || 0;
 
 			for (let i = 0; i < numMetaData; i++) {
@@ -616,7 +582,7 @@ const EXT_LOCALFUNCREF = 11;
 
 				const [exportName, func] = args;
 
-				on(getExportEventName(currentResourceName, exportName), (setCB) => {
+				on(getExportEventName(GetCurrentResourceName(), exportName), (setCB) => {
 					setCB(func);
 				});
 			},
