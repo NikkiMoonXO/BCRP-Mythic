@@ -1,0 +1,13 @@
+addDoorsListToConfig({
+ 
+        {
+            id = "GroveStreet",
+            model = 520341586,
+            coords = vector3(-4.0623049736023, -1871.9356689453, 24.245100021362),
+            locked = true,
+            double = nil,
+            rate = 6.0,
+            restricted = { { type = 'RealHouse', HouseName = 'GroveStreet' } }
+        },
+    
+})
