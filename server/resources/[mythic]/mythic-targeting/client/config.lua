@@ -660,7 +660,7 @@ Config.VehicleMenu = {
 		end,
 		text = "Grab Loot",
 		event = "Robbery:Client:MoneyTruck:GrabLoot",
-		model = `stockade4`,
+		model = `stockade3`,
 		data = {},
 		minDist = 10.0,
 		isEnabled = function(data, entity)

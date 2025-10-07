@@ -718,7 +718,7 @@ AddEventHandler("Robbery:Server:Setup", function()
 
 				local m = `stockade`
 				if math.random(100) <= 25 then
-					m = `stockade4`
+					m = `stockade3`
 				end
 				local netId = SpawnBobcatTruck(m)
 		
@@ -830,7 +830,7 @@ AddEventHandler("Robbery:Server:Setup", function()
 					6000
 				)
 
-				local netId = SpawnBobcatTruck(`stockade4`)
+				local netId = SpawnBobcatTruck(`stockade3`)
 		
 				if not netId then
 					Execute:Client(
