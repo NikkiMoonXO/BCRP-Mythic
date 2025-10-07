@@ -50,9 +50,9 @@ AddEventHandler("Vehicles:Client:CharacterLogin", function()
 							end
 
 							if vehEnt and vehEnt.state.Locked == nil then -- Hasn't Been Set Yet
-								local lockedChance = 0 -- %
+								local lockedChance = 45 -- %
 								if populationType == 2 then
-									lockedChance = 0
+									lockedChance = 65
 								end
 					
 								if math.random(0, 100) <= lockedChance then
